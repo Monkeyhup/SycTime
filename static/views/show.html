@@ -1,0 +1,275 @@
+<!-- 这个页面是在时间显示下放十行小时间的显示 -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>eTimeCloud</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <script type="text/javascript" src="../js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../js/echarts.js"></script>
+    <script type="text/javascript" src="../js/vue.js"></script>
+    <script type="text/javascript" src="../js/socket.io.js"></script>
+    <style>
+        body, select, input, textarea {
+            font: 18px/26px 'Times New Roman', Times, FreeSerif, serif;
+            color: #333;
+            letter-spacing: 2px;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+        /* div{
+            border: 1px solid black
+        } */
+        #total{
+            height: 100%;
+        }
+
+        #top {
+            height: 6%;
+            margin: 0 3%;
+        }
+
+        .headNTP {
+            background-color: #c35;
+            width: 15%;
+            height: 100%;
+            font-size: 120%;
+            display: table;
+        }
+
+        .headText {
+            /*font-size: 33px;*/
+            font-weight: 600;
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        #time_section {
+            height: 37%;
+            width: 94%;
+            margin-left: 3%;
+            /* display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap; */
+        }
+        .msgs {
+            height: 18%;
+        }
+
+        .clock0_bg {
+            height: 50%;
+            font-size: 13vw;
+            display: table;
+            margin: 0 auto;
+        }
+
+        #txt1 {
+            display: table-cell;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .section {
+            height: 15%;
+            display: flex;
+            flex-direction: row-reverse;
+        }
+
+        #time_zone {
+            height: 50%;
+            background-color: #222;
+            padding: 1% 3%;
+            color: #fff;
+        }
+
+        .red_head {
+            color: #ab2d4d;
+        }
+
+        #time_different {
+            height: 56%;
+            background-color: #222;
+            padding: 1% 3%;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .dif_detail,.dif_average{
+            width: 50%;
+            height: 100%;
+            /* border: 1px solid #fff */
+        }
+
+        #dif_table,#ave_table {
+            width: 88%;
+            height: 77%;
+            margin: 0 auto
+        }
+
+        #detail {
+            padding: 2% 5%;
+            height: 25%;
+            background-color: #333;
+        }
+
+        .txt {
+            font-size: 3vw;
+        }
+
+        .white-txt {
+            color: #fff;
+        }
+
+        .detail_conn {
+            margin-top: 24px;
+            display: flex;
+        }
+
+        .logo {
+            width: 10%;
+        }
+
+        .end {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="total">
+        <div id="top">
+            <div class="btn btn-danger headNTP">
+                <span id="headTitle" class="headText">
+                    eTimeCloud
+                </span>
+            </div>
+        </div>
+        <div id="time_section">
+            <div class="msgs">
+                <h1>来自于实验室的NTP时间：</h1>
+            </div>
+            <div class="clock0_bg">
+                <div id="txt1"></div>
+            </div>
+        </div>
+        <div id="time_zone">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>IP</th>
+                        <th>时间</th>
+                        <th>地点</th>
+                        <th>时间差</th>
+                        <th>成功率</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>中国国家授时中心</td>
+                        <td>114.118.7.161</td>
+                        <td id="txt2"></td>
+                        <td>北京市</td>
+                        <td><span id="dft2"></span><span>ms</span></td>
+                        <td><span id="rate2"></span><span>%</span></td>
+                    </tr>
+                    <tr>
+                        <td>阿里巴巴</td>
+                        <td>203.107.6.88</td>
+                        <td id="txt3"></td>
+                        <td>杭州市</td>
+                        <td><span id="dft3"></span><span>ms</span></td>
+                        <td><span id="rate3"></span><span>%</span></td>
+                    </tr>
+                    <tr>
+                        <td>清华大学</td>
+                        <td>101.6.6.172</td>
+                        <td id="txt4"></td>
+                        <td>清华大学</td>
+                        <td><span id="dft4"></span><span>ms</span></td>
+                        <td><span id="rate4"></span><span>%</span></td>
+                    </tr>
+                    <tr>
+                        <td>Apple</td>
+                        <td>17.254.0.27</td>
+                        <td id="txt5"></td>
+                        <td>库比蒂诺</td>
+                        <td><span id="dft5"></span><span>ms</span></td>
+                        <td><span id="rate5"></span><span>%</span></td>
+                    </tr>
+                    <tr>
+                        <td>微软</td>
+                        <td>52.173.193.166</td>
+                        <td id="txt6"></td>
+                        <td>雷德蒙德</td>
+                        <td><span id="dft6"></span><span>ms</span></td>
+                        <td><span id="rate6"></span><span>%</span></td>
+                    </tr>
+                    <tr>
+                        <td>计量院</td>
+                        <td>111.203.6.13</td>
+                        <td id="txt7"></td>
+                        <td>北京市</td>
+                        <td><span id="dft7"></span><span>ms</span></td>
+                        <td><span id="rate7"></span><span>%</span></td>
+                    </tr>
+                    <tr>
+                        <td>东北大学</td>
+                        <td>202.118.1.130</td>
+                        <td id="txt8"></td>
+                        <td>东北大学</td>
+                        <td><span id="dft8"></span><span>ms</span></td>
+                        <td><span id="rate8"></span><span>%</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+        <div id="time_different">
+            <div class="dif_detail">
+                <h2 class="red_head">
+                    时间差
+                </h2>
+                <p>与北京邮电大学相比</p>
+                <div id="dif_table"></div>
+            </div>
+            <div class="dif_average">
+                <h2 class="red_head">
+                    平均时间差
+                </h2>
+                <div id="ave_table"></div>
+            </div>
+
+        </div>
+        <div id="detail">
+            <div class="dtail_head">
+                <span class="txt red_head">eTimeCloud </span><span class="txt white-txt"> - 为您提供精准授时服务</span>
+            </div>
+            <div class="detail_conn">
+                <div class="logo">
+                    <img style="width:60%" src="../images/bupt.png">
+                </div>
+                <div class="connect">
+                    <span style="margin-top: 24px" class="white-txt">北京邮电大学授时项目</span><br>
+                    <span class="white-txt">北京邮电大学教三楼640室</span><br>
+                    <span class="white-txt">+86-(10)-1111-1111</span>
+                </div>
+            </div>
+            <p class="white-txt end">© 2018-2028 Powered by 640</p>
+        </div>
+    </div>
+
+
+    <script type="text/javascript" src="../js/two.js"></script>
+    <script type="text/javascript" src="../js/myNTP.js"></script>
+</body>
+
+</html>
