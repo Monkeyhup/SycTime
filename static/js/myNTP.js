@@ -1,8 +1,4 @@
-/**
- * Created by asus on 2018/7/25.
- */
-
-
+/*jshint esversion: 6 */
 /**
  * 显示时间
  * */
@@ -13,15 +9,15 @@ function startTime(site) {
         s = null,
         ms = null;
     if (site == 'bj') {
-        [h, m, s, ms] = [now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds() + '']
+        [h, m, s, ms] = [now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds() + ''];
     } else if (site == 'utc') {
-        [h, m, s, ms] = [now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds() + '']
+        [h, m, s, ms] = [now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds() + ''];
     }
     m = checkTime(m);
     s = checkTime(s);
     ms = checkMsTime(ms);
     $("#twd").empty();
-    $("#twd").html(h + ":" + m + ":" + s + ":" + ms)
+    $("#twd").html(h + ":" + m + ":" + s + ":" + ms);
 }
 /**
  * 为时与分加0
@@ -82,13 +78,13 @@ function getTableData(offset) {
 //获取当地时间
 function getLocalTime(msTime) {
     if (msTime == 0) {
-        return 0
+        return 0;
     } else {
         let date = new Date("Jan 01 1900 GMT");
         date.setUTCMilliseconds(msTime);
         let arr = [date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds() + ''];
         arr[3] = checkMsTime(arr[3]);
-        let str = arr[0] + ":" + arr[1] + ":" + arr[2] + "." + arr[3]
+        let str = arr[0] + ":" + arr[1] + ":" + arr[2] + "." + arr[3];
         return str;
     }
 }
@@ -118,10 +114,10 @@ function getaveTime(arr) {
         sum = 0;
     for (let i = 0; i < arr.length; i++) {
         if (arr[i]) {
-            sum += arr[i]
+            sum += arr[i];
         } else {
-            a++
+            a++;
         }
     }
-    return +(sum / (100 - a)).toFixed(2)
+    return +(sum / (100 - a)).toFixed(2);
 }

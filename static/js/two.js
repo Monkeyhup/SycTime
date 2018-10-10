@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 $(function () {
     let datum = {
         "bupt": {
@@ -31,21 +32,29 @@ $(function () {
         "db": {
             dTime: [],
             aveDb: []
+        },
+        "nist": {
+            niTime: [],
+            aveNist: []
+        },
+        "pool": {
+            pTime: [],
+            avePool: []
         }
-    }
+    };
     let socket = io();
     socket.on('bupt', function (data) {
         if (datum.bupt.bTime.length > 100) {
-            datum.bupt.bTime.shift()
+            datum.bupt.bTime.shift();
         }
         datum.bupt.bTime.push(data);
         let baseTime = getLocalTime(data);
-        $("#txt1").text(baseTime)
-    })
+        $("#txt1").text(baseTime);
+    });
     socket.on('ntsc', function (data) {
-        console.log(data)
+        console.log(data);
         let baseTime = getLocalTime(data); //将毫秒转化为时间
-        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1]) //计算与标准时间的差值
+        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1]); //计算与标准时间的差值
         if (datum.ntsc.nTime.length == 100) { //判断数组的长度
             let rateTime = getRateTime(datum.ntsc.nTime); //计算成功率
             let aveTime = getaveTime(datum.ntsc.aveNtsc); //计算成功率
@@ -55,7 +64,7 @@ $(function () {
 
             myChartb.setOption(optionb);
 
-            $("#rate2").text(rateTime) //未成功率赋值
+            $("#rate2").text(rateTime); //未成功率赋值
             datum.ntsc.nTime.length = 0; //重新开始数组并计算成功率
             datum.ntsc.aveNtsc.length = 0; //重新开始数组并计算平均成功率
         }
@@ -72,12 +81,12 @@ $(function () {
         myChart.setOption(option);
 
 
-        $("#txt2").text(baseTime)
-        $("#dft2").text(driftTime)
-    })
+        $("#txt2").text(baseTime);
+        $("#dft2").text(driftTime);
+    });
     socket.on('ali', function (data) {
         let baseTime = getLocalTime(data);
-        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1])
+        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1]);
         if (datum.ali.aTime.length == 100) {
             let rateTime = getRateTime(datum.ali.aTime);
             let aveTime = getaveTime(datum.ali.aveAli); //计算成功率
@@ -86,7 +95,7 @@ $(function () {
 
             myChartb.setOption(optionb);
 
-            $("#rate3").text(rateTime)
+            $("#rate3").text(rateTime);
             datum.ali.aTime.length = 0;
             datum.ali.aveAli.length = 0;
         }
@@ -100,12 +109,12 @@ $(function () {
             option.series[1].data.push(driftTime);
         }
         myChart.setOption(option);
-        $("#txt3").text(baseTime)
-        $("#dft3").text(driftTime)
-    })
+        $("#txt3").text(baseTime);
+        $("#dft3").text(driftTime);
+    });
     socket.on('ts', function (data) {
         let baseTime = getLocalTime(data);
-        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1])
+        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1]);
         if (datum.ts.tTime.length == 100) {
             let rateTime = getRateTime(datum.ts.tTime);
             let aveTime = getaveTime(datum.ts.aveTs); //计算成功率
@@ -114,7 +123,7 @@ $(function () {
             optionb.series[0].data[2].value = aveTime;
             myChartb.setOption(optionb);
 
-            $("#rate4").text(rateTime)
+            $("#rate4").text(rateTime);
             datum.ts.tTime.length = 0;
             datum.ts.aveTs.length = 0;
         }
@@ -129,12 +138,12 @@ $(function () {
             option.series[2].data.push(driftTime);
         }
         myChart.setOption(option);
-        $("#txt4").text(baseTime)
-        $("#dft4").text(driftTime)
-    })
+        $("#txt4").text(baseTime);
+        $("#dft4").text(driftTime);
+    });
     socket.on('Apple', function (data) {
         let baseTime = getLocalTime(data);
-        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1])
+        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1]);
         if (datum.Apple.apTime.length == 100) {
             let rateTime = getRateTime(datum.Apple.apTime);
             let aveTime = getaveTime(datum.Apple.aveApple); //计算成功率
@@ -143,7 +152,7 @@ $(function () {
             optionb.series[0].data[3].value = aveTime;
             myChartb.setOption(optionb);
 
-            $("#rate5").text(rateTime)
+            $("#rate5").text(rateTime);
             datum.Apple.apTime.length = 0;
             datum.Apple.aveApple.length = 0;
         }
@@ -157,12 +166,12 @@ $(function () {
             option.series[3].data.push(driftTime);
         }
         myChart.setOption(option);
-        $("#txt5").text(baseTime)
-        $("#dft5").text(driftTime)
-    })
+        $("#txt5").text(baseTime);
+        $("#dft5").text(driftTime);
+    });
     socket.on('mic', function (data) {
         let baseTime = getLocalTime(data);
-        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1])
+        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1]);
         if (datum.mic.mTime.length == 100) {
             let rateTime = getRateTime(datum.mic.mTime);
             let aveTime = getaveTime(datum.mic.aveMic); //计算成功率
@@ -171,7 +180,7 @@ $(function () {
             optionb.series[0].data[4].value = aveTime;
             myChartb.setOption(optionb);
 
-            $("#rate6").text(rateTime)
+            $("#rate6").text(rateTime);
             datum.mic.mTime.length = 0;
             datum.mic.aveMic.length = 0;
         }
@@ -185,12 +194,12 @@ $(function () {
             option.series[4].data.push(driftTime);
         }
         myChart.setOption(option);
-        $("#txt6").text(baseTime)
-        $("#dft6").text(driftTime)
-    })
+        $("#txt6").text(baseTime);
+        $("#dft6").text(driftTime);
+    });
     socket.on('jly', function (data) {
         let baseTime = getLocalTime(data);
-        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1])
+        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1]);
         if (datum.jly.jTime.length == 100) {
             let rateTime = getRateTime(datum.jly.jTime);
             let aveTime = getaveTime(datum.jly.aveJly); //计算成功率
@@ -199,7 +208,7 @@ $(function () {
             optionb.series[0].data[5].value = aveTime;
             myChartb.setOption(optionb);
 
-            $("#rate7").text(rateTime)
+            $("#rate7").text(rateTime);
             datum.jly.jTime.length = 0;
             datum.jly.aveJly.length = 0;
         }
@@ -213,12 +222,12 @@ $(function () {
             option.series[5].data.push(driftTime);
         }
         myChart.setOption(option);
-        $("#txt7").text(baseTime)
-        $("#dft7").text(driftTime)
-    })
+        $("#txt7").text(baseTime);
+        $("#dft7").text(driftTime);
+    });
     socket.on('db', function (data) {
         let baseTime = getLocalTime(data);
-        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1])
+        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1]);
         if (datum.db.dTime.length == 100) {
             let rateTime = getRateTime(datum.db.dTime);
             let aveTime = getaveTime(datum.db.aveDb); //计算成功率
@@ -227,7 +236,7 @@ $(function () {
             optionb.series[0].data[6].value = aveTime;
             myChartb.setOption(optionb);
 
-            $("#rate8").text(rateTime)
+            $("#rate8").text(rateTime);
             datum.db.dTime.length = 0;
             datum.db.aveDb.length = 0;
         }
@@ -241,19 +250,75 @@ $(function () {
             option.series[6].data.push(driftTime);
         }
         myChart.setOption(option);
-        $("#txt8").text(baseTime)
-        $("#dft8").text(driftTime)
-    })
+        $("#txt8").text(baseTime);
+        $("#dft8").text(driftTime);
+    });
+    socket.on('nist', function (data) {
+        let baseTime = getLocalTime(data);
+        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1]);
+        if (datum.nist.niTime.length == 100) {
+            let rateTime = getRateTime(datum.nist.niTime);
+            let aveTime = getaveTime(datum.nist.aveNist); //计算成功率
+
+            //更新图表二的数据值
+            optionb.series[0].data[7].value = aveTime;
+            myChartb.setOption(optionb);
+
+            $("#rate9").text(rateTime);
+            datum.nist.niTime.length = 0;
+            datum.nist.aveNist.length = 0;
+        }
+        datum.nist.niTime.push(data);
+        datum.nist.aveNist.push(driftTime);
+
+        if (option.series[7].data.length < 50) {
+            option.series[7].data.push(driftTime);
+        } else {
+            option.series[7].data.shift();
+            option.series[7].data.push(driftTime);
+        }
+        myChart.setOption(option);
+        $("#txt9").text(baseTime);
+        $("#dft9").text(driftTime);
+    });
+    socket.on('pool', function (data) {
+        let baseTime = getLocalTime(data);
+        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1]);
+        if (datum.pool.pTime.length == 100) {
+            let rateTime = getRateTime(datum.pool.pTime);
+            let aveTime = getaveTime(datum.pool.avePool); //计算成功率
+
+            //更新图表二的数据值
+            optionb.series[0].data[8].value = aveTime;
+            myChartb.setOption(optionb);
+
+            $("#rate10").text(rateTime);
+            datum.pool.pTime.length = 0;
+            datum.pool.avePool.length = 0;
+        }
+        datum.pool.pTime.push(data);
+        datum.pool.avePool.push(driftTime);
+
+        if (option.series[8].data.length < 50) {
+            option.series[8].data.push(driftTime);
+        } else {
+            option.series[8].data.shift();
+            option.series[8].data.push(driftTime);
+        }
+        myChart.setOption(option);
+        $("#txt10").text(baseTime);
+        $("#dft10").text(driftTime);
+    });
     $("#btn").on('click', function () {
-        console.log(datum)
-    })
+        console.log(datum);
+    });
 
     //以下是图表一，即与标准时间的差值
     let myChart = echarts.init(document.getElementById('dif_table'));
 
     // 指定图表的配置项和数据
     option = {
-        color: ['#759aa0', '#e69d87', '#ea7e53', '#eedd78', '#73a373','#7289ab','#91ca8c' ],
+        color: ['#759aa0', '#e69d87', '#ea7e53', '#eedd78', '#73a373','#7289ab','#91ca8c','#f49f42','#dd6b66','#759aa0' ],
         legend: {
             data: [{
                 name: '中国国家授时中心',
@@ -289,6 +354,16 @@ $(function () {
                 name: '东北大学',
                 textStyle: {
                     color: '#91ca8c'
+                }
+            }, {
+                name: 'NIST',
+                textStyle: {
+                    color: '#f49f42'
+                }
+            }, {
+                name: 'POOL',
+                textStyle: {
+                    color: '#dd6b66'
                 }
             }]
         },
@@ -390,6 +465,16 @@ $(function () {
                 name: '东北大学',
                 type: 'line',
                 data: []
+            },
+            {
+                name: 'NIST',
+                type: 'line',
+                data: []
+            },
+            {
+                name: 'POOL',
+                type: 'line',
+                data: []
             }
         ]
     };
@@ -418,7 +503,7 @@ $(function () {
         },
         xAxis: {
             type: 'category',
-            data: ['中国国家授时中心', '阿里巴巴', '清华大学', 'Apple', '微软', '计量院','东北大学'],
+            data: ['中国国家授时中心', '阿里巴巴', '清华大学', 'Apple', '微软', '计量院','东北大学','NIST','NTP.POOL'],
             axisLine: {
                 show: true,
                 lineStyle: {
@@ -499,7 +584,13 @@ $(function () {
             },{
                 name: '东北大学',
                 value: 13.43,
-            }, ]
+            }, {
+                name: 'nist',
+                value: 15.31,
+            }, {
+                name: 'pool',
+                value: 12.31,
+            }]
         }]
     };
     // 使用刚指定的配置项和数据显示图表。

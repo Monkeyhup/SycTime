@@ -97,7 +97,7 @@ $(function () {
     for (i = 0; i < groupCheckbox.length; i++) {
         console.log(groupCheckbox)
         groupCheckbox[i].onclick = function () {
-            console.log(this.checked)
+            console.log(this.checked);
             if (this.checked) {
                 this.parentNode.setAttribute("class", "ac")
             } else {

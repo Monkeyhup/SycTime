@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 const Koa = require('koa2');
 const fs = require('fs');
 const static = require('koa-static');
@@ -11,9 +12,9 @@ const staticPath = './static';
 
 app.use(static(
     path.join(__dirname, staticPath)
-))
-const server = require('http').Server(app.callback())
-const io = require('socket.io')(server)
+));
+const server = require('http').Server(app.callback());
+const io = require('socket.io')(server);
 let a = 1,
     b = 1,
     c = 1,
@@ -27,7 +28,7 @@ let a = 1,
 
 
 io.on('connection', function (socket) {
-    console.log('a user connected')
+    console.log('a user connected');
     // google
     // let tw1 = setInterval(function () {
     //     ntpClient.getNetworkTime("time1.google.com", 123,800, function (err, date) {
@@ -89,19 +90,19 @@ io.on('connection', function (socket) {
     //     });
     // }, 629);
     //清华大学
-    // let tw6 = setInterval(function () {
-    //     ntpClient.getNetworkTime("s2a.time.edu.cn", 123,400, function (err, date) {
-    //         if (err) {
-    //             console.error(err);
-    //             socket.emit('ts', 0);
-    //             return;
-    //         }
-    //         socket.emit('ts', date);
-    //     });
-    // }, 500);
+    let tw6 = setInterval(function () {
+        ntpClient.getNetworkTime("cn.pool.ntp.org", 123,500, function (err, date) {
+            if (err) {
+                console.error(err);
+                socket.emit('ts', 0);
+                return;
+            }
+            socket.emit('ts', date);
+        });
+    }, 629);
     //东北大学
     let tw7 = setInterval(function () {
-        ntpClient.getNetworkTime("ntp.ntsc.ac.cn", 123,300, function (err, date) {
+        ntpClient.getNetworkTime("time.nist.gov", 123,800, function (err, date) {
             if (err) {
                 console.error(err);
                 socket.emit('db', 0);
@@ -109,7 +110,7 @@ io.on('connection', function (socket) {
             }
             socket.emit('db', date);
         });
-    }, 629);
+    }, 1000);
 
     socket.on('disconnect', function () {
         // clearInterval(tw1);
@@ -120,11 +121,11 @@ io.on('connection', function (socket) {
         // clearInterval(tw6);
         clearInterval(tw7);
     });
-})
+});
 
 
 
 
 server.listen(3000, () => {
-    console.log('Application is starting on port 3000')
-})
+    console.log('Application is starting on port 3000');
+});

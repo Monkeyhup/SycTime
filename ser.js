@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 const Koa = require('koa2');
 const fs = require('fs');
 const static = require('koa-static');
@@ -10,13 +11,13 @@ const staticPath = './static';
 
 app.use(static(
     path.join(__dirname, staticPath)
-))
-const server = require('http').Server(app.callback())
-const io = require('socket.io')(server)
+));
+const server = require('http').Server(app.callback());
+const io = require('socket.io')(server);
 
 
 io.on('connection', function (socket) {
-    console.log('a user connected')
+    console.log('a user connected');
     // 北邮内网
     let tw1 = setInterval(function () {
         ntpClient.getNetworkTime("10.3.9.4", 123,30, function (err, date) {
@@ -32,7 +33,7 @@ io.on('connection', function (socket) {
     //国家授时中心
     let tw2 = setInterval(function () {
         ntpClient.getNetworkTime("ntp.ntsc.ac.cn", 123,300, function (err, date) {
-            console.log(date)
+            console.log(date);
             if (err) {
                 console.error(err);
                 socket.emit('ntsc', 0);
@@ -111,6 +112,29 @@ io.on('connection', function (socket) {
         });
     }, 629);
 
+    //NIST
+    let tw9 = setInterval(function () {
+        ntpClient.getNetworkTime("time.nist.gov", 123,500, function (err, date) {
+            if (err) {
+                console.error(err);
+                socket.emit('nist', 0);
+                return;
+            }
+            socket.emit('nist', date);
+        });
+    }, 629);
+    //NTP.POOL
+    let tw10 = setInterval(function () {
+        ntpClient.getNetworkTime("cn.pool.ntp.org", 123,500, function (err, date) {
+            if (err) {
+                console.error(err);
+                socket.emit('pool', 0);
+                return;
+            }
+            socket.emit('pool', date);
+        });
+    }, 629);
+
     socket.on('disconnect', function () {
         clearInterval(tw1);
         clearInterval(tw2);
@@ -120,9 +144,11 @@ io.on('connection', function (socket) {
         clearInterval(tw6);
         clearInterval(tw7);
         clearInterval(tw8);
+        clearInterval(tw9);
+        clearInterval(tw10);
     });
-})
+});
 
 server.listen(3000, () => {
-    console.log('Application is starting on port 3000')
-})
+    console.log('Application is starting on port 3000');
+});

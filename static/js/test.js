@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 $(function () {
     let datum={
         "google":[],
@@ -7,7 +8,7 @@ $(function () {
         "bupt":[],
         "ts":[],
         "db":[]
-    }
+    };
     let socket = io();
     // socket.on('google', function (data) {
     //     console.log(data)
@@ -50,43 +51,43 @@ $(function () {
     //     datum.bupt.push(baseTime);
     //     $("#txt5").text(baseTime)
     // })
-    // socket.on('ts', function (data) {
-    //     let baseTime = getLocalTime(data);
-    //     if (datum.ts.length > 1000) {
-    //         datum.ts.shift()
-    //     }
-    //     datum.ts.push(baseTime);
-    //     $("#txt6").text(baseTime)
-    // })
+    socket.on('ts', function (data) {
+        let baseTime = getLocalTime(data);
+        if (datum.ts.length > 1000) {
+            datum.ts.shift();
+        }
+        datum.ts.push(baseTime);
+        $("#txt6").text(baseTime);
+    });
     socket.on('db', function (data) {
         let baseTime = getLocalTime(data);
         if (datum.db.length > 1000) {
-            datum.db.shift()
+            datum.db.shift();
         }
         datum.db.push(baseTime);
-        $("#txt7").text(baseTime)
-    })
+        $("#txt7").text(baseTime);
+    });
     $("#btn").on('click', function () {
         let source = {};
         let arrCheckbox = $("input[name='check']");
         for (i = 0; i < arrCheckbox.length; i++) {
             if (arrCheckbox[i].checked) {
-                source[arrCheckbox[i].value]=datum[arrCheckbox[i].value]
+                source[arrCheckbox[i].value]=datum[arrCheckbox[i].value];
             }
         }
-        console.log(source)
-    })
+        console.log(source);
+    });
     var groupCheckbox = $("input[name='check']");
     // var groupCheckbox = $(".option");
     for (i = 0; i < groupCheckbox.length; i++) {
-        console.log(groupCheckbox)
+        console.log(groupCheckbox);
         groupCheckbox[i].onclick = function () {
-            console.log(this.checked)
+            console.log(this.checked);
             if (this.checked) {
-                this.parentNode.setAttribute("class", "ac")
+                this.parentNode.setAttribute("class", "ac");
             } else {
-                this.parentNode.setAttribute("class", "qu")
+                this.parentNode.setAttribute("class", "qu");
             }
-        }
+        };
     }
 });
