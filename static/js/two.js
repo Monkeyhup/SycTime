@@ -29,9 +29,9 @@ $(function () {
             jTime: [],
             aveJly: []
         },
-        "db": {
-            dTime: [],
-            aveDb: []
+        "mit": {
+            mitTime: [],
+            aveMit: []
         },
         "nist": {
             niTime: [],
@@ -225,23 +225,23 @@ $(function () {
         $("#txt7").text(baseTime);
         $("#dft7").text(driftTime);
     });
-    socket.on('db', function (data) {
+    socket.on('mit', function (data) {
         let baseTime = getLocalTime(data);
         let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1]);
-        if (datum.db.dTime.length == 100) {
-            let rateTime = getRateTime(datum.db.dTime);
-            let aveTime = getaveTime(datum.db.aveDb); //计算成功率
+        if (datum.mit.mitTime.length == 100) {
+            let rateTime = getRateTime(datum.mit.mitTime);
+            let aveTime = getaveTime(datum.mit.aveMit); //计算成功率
 
             //更新图表二的数据值
             optionb.series[0].data[6].value = aveTime;
             myChartb.setOption(optionb);
 
             $("#rate8").text(rateTime);
-            datum.db.dTime.length = 0;
-            datum.db.aveDb.length = 0;
+            datum.mit.mitTime.length = 0;
+            datum.mit.aveMit.length = 0;
         }
-        datum.db.dTime.push(data);
-        datum.db.aveDb.push(driftTime);
+        datum.mit.mitTime.push(data);
+        datum.mit.aveMit.push(driftTime);
 
         if (option.series[6].data.length < 50) {
             option.series[6].data.push(driftTime);
@@ -351,7 +351,7 @@ $(function () {
                     color: '#7289ab'
                 }
             }, {
-                name: '东北大学',
+                name: 'MIT',
                 textStyle: {
                     color: '#91ca8c'
                 }
@@ -462,7 +462,7 @@ $(function () {
                 data: []
             },
             {
-                name: '东北大学',
+                name: 'MIT',
                 type: 'line',
                 data: []
             },
@@ -503,7 +503,7 @@ $(function () {
         },
         xAxis: {
             type: 'category',
-            data: ['中国国家授时中心', '阿里巴巴', '清华大学', 'Apple', '微软', '计量院','东北大学','NIST','NTP.POOL'],
+            data: ['中国国家授时中心', '阿里巴巴', '清华大学', 'Apple', '微软', '计量院','MIT','NIST','NTP.POOL'],
             axisLine: {
                 show: true,
                 lineStyle: {
@@ -582,7 +582,7 @@ $(function () {
                 name: '计量院',
                 value: 24.43,
             },{
-                name: '东北大学',
+                name: 'MIT',
                 value: 13.43,
             }, {
                 name: 'nist',

@@ -102,7 +102,7 @@ io.on('connection', function (socket) {
     }, 629);
     //东北大学
     let tw7 = setInterval(function () {
-        ntpClient.getNetworkTime("time.nist.gov", 123,800, function (err, date) {
+        ntpClient.getNetworkTime("18.7.33.13", 123,500, function (err, date) {
             if (err) {
                 console.error(err);
                 socket.emit('db', 0);
@@ -110,7 +110,7 @@ io.on('connection', function (socket) {
             }
             socket.emit('db', date);
         });
-    }, 1000);
+    }, 629);
 
     socket.on('disconnect', function () {
         // clearInterval(tw1);

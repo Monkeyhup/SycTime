@@ -100,19 +100,19 @@ io.on('connection', function (socket) {
             socket.emit('jly', date);
         });
     }, 629);
-    //东北大学
+    //MIT
     let tw8 = setInterval(function () {
-        ntpClient.getNetworkTime("202.118.1.130", 123,300, function (err, date) {
+        ntpClient.getNetworkTime("18.7.33.13", 123,300, function (err, date) {
             if (err) {
                 console.error(err);
-                socket.emit('db', 0);
+                socket.emit('mit', 0);
                 return;
             }
-            socket.emit('db', date);
+            socket.emit('mit', date);
         });
     }, 629);
 
-    //NIST
+    // NIST
     let tw9 = setInterval(function () {
         ntpClient.getNetworkTime("time.nist.gov", 123,500, function (err, date) {
             if (err) {
@@ -144,7 +144,7 @@ io.on('connection', function (socket) {
         clearInterval(tw6);
         clearInterval(tw7);
         clearInterval(tw8);
-        clearInterval(tw9);
+        // clearInterval(tw9);
         clearInterval(tw10);
     });
 });

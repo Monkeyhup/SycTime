@@ -94,6 +94,8 @@ function getDriftTime(msTime, norm) {
     let re = msTime - norm;
     if (msTime > 0 && norm > 0) {
         return +re.toFixed(2);
+    }else{
+        return 'N/A';
     }
 }
 
@@ -113,7 +115,7 @@ function getaveTime(arr) {
     let a = 0,
         sum = 0;
     for (let i = 0; i < arr.length; i++) {
-        if (arr[i]) {
+        if (arr[i]>1) {
             sum += arr[i];
         } else {
             a++;
