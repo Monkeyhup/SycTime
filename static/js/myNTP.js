@@ -20,7 +20,7 @@ function startTime(site) {
     $("#twd").html(h + ":" + m + ":" + s + ":" + ms);
 }
 /**
- * 为时与分加0
+ * 为分与秒加0
  * */
 function checkTime(i) {
     if (i < 10) {
@@ -83,6 +83,8 @@ function getLocalTime(msTime) {
         let date = new Date("Jan 01 1900 GMT");
         date.setUTCMilliseconds(msTime);
         let arr = [date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds() + ''];
+        arr[1] = checkTime(arr[1]);
+        arr[2] = checkTime(arr[2]);
         arr[3] = checkMsTime(arr[3]);
         let str = arr[0] + ":" + arr[1] + ":" + arr[2] + "." + arr[3];
         return str;
