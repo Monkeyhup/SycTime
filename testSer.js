@@ -8,13 +8,15 @@ const app = new Koa();
 const ntpClient = require('ntp-client');
 
 
-const staticPath = './static';
+const staticPath = 'static';
 
 app.use(static(
     path.join(__dirname, staticPath)
 ));
 const server = require('http').Server(app.callback());
 const io = require('socket.io')(server);
+let short = 0,
+    val = 0;
 let a = 1,
     b = 1,
     c = 1,
@@ -91,26 +93,50 @@ io.on('connection', function (socket) {
     // }, 629);
     //清华大学
     let tw6 = setInterval(function () {
-        ntpClient.getNetworkTime("cn.pool.ntp.org", 123,500, function (err, date) {
+        ntpClient.getNetworkTime("192.168.21.100", 123, 500, function (err, date) {
             if (err) {
                 console.error(err);
                 socket.emit('ts', 0);
                 return;
             }
+            // val = date - short;
+            // short = date;
+            // let w_data = val + '\r\n';
+            // let b_data = new Buffer(w_data);
+            // fs.writeFile(__dirname + '/data/base.txt', b_data, { flag: 'a' }, function (err) {
+            //     if (err) {
+            //         console.error(err);
+            //     } else {
+            //         console.log('写入成功');
+            //     }
+            // });
             socket.emit('ts', date);
         });
-    }, 629);
+    }, 1);
+    let short1 = 0,
+    val1 = 0;
     //东北大学
-    let tw7 = setInterval(function () {
-        ntpClient.getNetworkTime("18.7.33.13", 123,500, function (err, date) {
-            if (err) {
-                console.error(err);
-                socket.emit('db', 0);
-                return;
-            }
-            socket.emit('db', date);
-        });
-    }, 629);
+    // let tw7 = setInterval(function () {
+    //     ntpClient.getNetworkTime("18.7.33.13", 123, 500, function (err, date) {
+    //         if (err) {
+    //             console.error(err);
+    //             socket.emit('db', 0);
+    //             return;
+    //         }
+    //         val1 = date - short1;
+    //         short1 = date;
+    //         let w_data = val1 + '\r\n';
+    //         let b_data = new Buffer(w_data);
+    //         fs.writeFile(__dirname + '/data/base1.txt', b_data, { flag: 'a' }, function (err) {
+    //             if (err) {
+    //                 console.error(err);
+    //             } else {
+    //                 console.log('写入成功');
+    //             }
+    //         });
+    //         socket.emit('db', date);
+    //     });
+    // }, 1000);
 
     socket.on('disconnect', function () {
         // clearInterval(tw1);

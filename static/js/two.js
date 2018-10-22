@@ -44,20 +44,24 @@ $(function () {
     };
     let socket = io();
     socket.on('bupt', function (data) {
+        let baseTime = getLocalTime(data);
+        $("#txt1").text(baseTime);
         if (datum.bupt.bTime.length > 100) {
             datum.bupt.bTime.shift();
         }
         datum.bupt.bTime.push(data);
-        let baseTime = getLocalTime(data);
-        $("#txt1").text(baseTime);
     });
     socket.on('ntsc', function (data) {
-        console.log(data);
-        let baseTime = getLocalTime(data); //将毫秒转化为时间
-        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1]); //计算与标准时间的差值
-        if (datum.ntsc.nTime.length == 100) { //判断数组的长度
+        let baseTime = getLocalTime(data.time); //将毫秒转化为时间
+        let driftTime = data.dif; //计算与标准时间的差值
+        $("#txt2").text(baseTime);
+        $("#dft2").text(driftTime);
+        datum.ntsc.nTime.push(data.time); // 为数组添加时间值
+        datum.ntsc.aveNtsc.push(driftTime); // 为数组添加时间值
+
+        if (datum.ntsc.nTime.length == 100) {
             let rateTime = getRateTime(datum.ntsc.nTime); //计算成功率
-            let aveTime = getaveTime(datum.ntsc.aveNtsc); //计算成功率
+            let aveTime = getaveTime(datum.ntsc.aveNtsc); //计算平均时间误差
 
             //更新图表二的数据值
             optionb.series[0].data[0].value = aveTime;
@@ -65,11 +69,26 @@ $(function () {
             myChartb.setOption(optionb);
 
             $("#rate2").text(rateTime); //未成功率赋值
-            datum.ntsc.nTime.length = 0; //重新开始数组并计算成功率
-            datum.ntsc.aveNtsc.length = 0; //重新开始数组并计算平均成功率
+            datum.ntsc.nTime.shift(); //重新开始数组并计算成功率
+            datum.ntsc.aveNtsc.shift(); //重新开始数组并计算平均成功率
         }
-        datum.ntsc.nTime.push(data); // 为数组添加时间值
-        datum.ntsc.aveNtsc.push(driftTime); // 为数组添加时间值
+
+        // aaaaaaaaaaaaaaaaaaaaaaaaa
+        // if (datum.ntsc.nTime.length == 100) { //判断数组的长度
+        //     let rateTime = getRateTime(datum.ntsc.nTime); //计算成功率
+        //     let aveTime = getaveTime(datum.ntsc.aveNtsc); //计算成功率
+
+        //     //更新图表二的数据值
+        //     optionb.series[0].data[0].value = aveTime;
+
+        //     myChartb.setOption(optionb);
+
+        //     $("#rate2").text(rateTime); //未成功率赋值
+        //     datum.ntsc.nTime.length = 0; //重新开始数组并计算成功率
+        //     datum.ntsc.aveNtsc.length = 0; //重新开始数组并计算平均成功率
+        // }
+        // datum.ntsc.nTime.push(data.time); // 为数组添加时间值
+        // datum.ntsc.aveNtsc.push(driftTime); // 为数组添加时间值
 
         //更新图表一的数据值
         if (option.series[0].data.length < 50) {
@@ -80,13 +99,14 @@ $(function () {
         }
         myChart.setOption(option);
 
-
-        $("#txt2").text(baseTime);
-        $("#dft2").text(driftTime);
     });
     socket.on('ali', function (data) {
-        let baseTime = getLocalTime(data);
-        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1]);
+        let baseTime = getLocalTime(data.time);
+        let driftTime = data.dif; //计算与标准时间的差值
+        $("#txt3").text(baseTime);
+        $("#dft3").text(driftTime);
+        datum.ali.aTime.push(data.time);
+        datum.ali.aveAli.push(driftTime);
         if (datum.ali.aTime.length == 100) {
             let rateTime = getRateTime(datum.ali.aTime);
             let aveTime = getaveTime(datum.ali.aveAli); //计算成功率
@@ -96,11 +116,10 @@ $(function () {
             myChartb.setOption(optionb);
 
             $("#rate3").text(rateTime);
-            datum.ali.aTime.length = 0;
-            datum.ali.aveAli.length = 0;
+            datum.ali.aTime.shift();
+            datum.ali.aveAli.shift();
         }
-        datum.ali.aTime.push(data);
-        datum.ali.aveAli.push(driftTime);
+
 
         if (option.series[1].data.length < 50) {
             option.series[1].data.push(driftTime);
@@ -109,12 +128,15 @@ $(function () {
             option.series[1].data.push(driftTime);
         }
         myChart.setOption(option);
-        $("#txt3").text(baseTime);
-        $("#dft3").text(driftTime);
+
     });
     socket.on('ts', function (data) {
-        let baseTime = getLocalTime(data);
-        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1]);
+        let baseTime = getLocalTime(data.time);
+        let driftTime = data.dif; //计算与标准时间的差值
+        $("#txt4").text(baseTime);
+        $("#dft4").text(driftTime);
+        datum.ts.tTime.push(data.time);
+        datum.ts.aveTs.push(driftTime);
         if (datum.ts.tTime.length == 100) {
             let rateTime = getRateTime(datum.ts.tTime);
             let aveTime = getaveTime(datum.ts.aveTs); //计算成功率
@@ -124,11 +146,10 @@ $(function () {
             myChartb.setOption(optionb);
 
             $("#rate4").text(rateTime);
-            datum.ts.tTime.length = 0;
-            datum.ts.aveTs.length = 0;
+            datum.ts.tTime.shift();
+            datum.ts.aveTs.shift();
         }
-        datum.ts.tTime.push(data);
-        datum.ts.aveTs.push(driftTime);
+
 
 
         if (option.series[2].data.length < 50) {
@@ -138,12 +159,15 @@ $(function () {
             option.series[2].data.push(driftTime);
         }
         myChart.setOption(option);
-        $("#txt4").text(baseTime);
-        $("#dft4").text(driftTime);
+
     });
     socket.on('Apple', function (data) {
-        let baseTime = getLocalTime(data);
-        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1]);
+        let baseTime = getLocalTime(data.time);
+        let driftTime = data.dif; //计算与标准时间的差值
+        $("#txt5").text(baseTime);
+        $("#dft5").text(driftTime);
+        datum.Apple.apTime.push(data.time);
+        datum.Apple.aveApple.push(driftTime);
         if (datum.Apple.apTime.length == 100) {
             let rateTime = getRateTime(datum.Apple.apTime);
             let aveTime = getaveTime(datum.Apple.aveApple); //计算成功率
@@ -153,11 +177,10 @@ $(function () {
             myChartb.setOption(optionb);
 
             $("#rate5").text(rateTime);
-            datum.Apple.apTime.length = 0;
-            datum.Apple.aveApple.length = 0;
+            datum.Apple.apTime.shift();
+            datum.Apple.aveApple.shift();
         }
-        datum.Apple.apTime.push(data);
-        datum.Apple.aveApple.push(driftTime);
+
 
         if (option.series[3].data.length < 50) {
             option.series[3].data.push(driftTime);
@@ -166,12 +189,15 @@ $(function () {
             option.series[3].data.push(driftTime);
         }
         myChart.setOption(option);
-        $("#txt5").text(baseTime);
-        $("#dft5").text(driftTime);
+
     });
     socket.on('mic', function (data) {
-        let baseTime = getLocalTime(data);
-        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1]);
+        let baseTime = getLocalTime(data.time);
+        let driftTime = data.dif; //计算与标准时间的差值
+        $("#txt6").text(baseTime);
+        $("#dft6").text(driftTime);
+        datum.mic.mTime.push(data.time);
+        datum.mic.aveMic.push(driftTime);
         if (datum.mic.mTime.length == 100) {
             let rateTime = getRateTime(datum.mic.mTime);
             let aveTime = getaveTime(datum.mic.aveMic); //计算成功率
@@ -181,11 +207,10 @@ $(function () {
             myChartb.setOption(optionb);
 
             $("#rate6").text(rateTime);
-            datum.mic.mTime.length = 0;
-            datum.mic.aveMic.length = 0;
+            datum.mic.mTime.shift();
+            datum.mic.aveMic.shift();
         }
-        datum.mic.mTime.push(data);
-        datum.mic.aveMic.push(driftTime);
+
 
         if (option.series[4].data.length < 50) {
             option.series[4].data.push(driftTime);
@@ -194,12 +219,15 @@ $(function () {
             option.series[4].data.push(driftTime);
         }
         myChart.setOption(option);
-        $("#txt6").text(baseTime);
-        $("#dft6").text(driftTime);
+
     });
     socket.on('jly', function (data) {
-        let baseTime = getLocalTime(data);
-        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1]);
+        let baseTime = getLocalTime(data.time);
+        let driftTime = data.dif; //计算与标准时间的差值
+        $("#txt7").text(baseTime);
+        $("#dft7").text(driftTime);
+        datum.jly.jTime.push(data.time);
+        datum.jly.aveJly.push(driftTime);
         if (datum.jly.jTime.length == 100) {
             let rateTime = getRateTime(datum.jly.jTime);
             let aveTime = getaveTime(datum.jly.aveJly); //计算成功率
@@ -209,11 +237,10 @@ $(function () {
             myChartb.setOption(optionb);
 
             $("#rate7").text(rateTime);
-            datum.jly.jTime.length = 0;
-            datum.jly.aveJly.length = 0;
+            datum.jly.jTime.shift();
+            datum.jly.aveJly.shift();
         }
-        datum.jly.jTime.push(data);
-        datum.jly.aveJly.push(driftTime);
+
 
         if (option.series[5].data.length < 50) {
             option.series[5].data.push(driftTime);
@@ -222,12 +249,15 @@ $(function () {
             option.series[5].data.push(driftTime);
         }
         myChart.setOption(option);
-        $("#txt7").text(baseTime);
-        $("#dft7").text(driftTime);
+
     });
     socket.on('mit', function (data) {
-        let baseTime = getLocalTime(data);
-        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1]);
+        let baseTime = getLocalTime(data.time);
+        let driftTime = data.dif; //计算与标准时间的差值
+        $("#txt8").text(baseTime);
+        $("#dft8").text(driftTime);
+        datum.mit.mitTime.push(data.time);
+        datum.mit.aveMit.push(driftTime);
         if (datum.mit.mitTime.length == 100) {
             let rateTime = getRateTime(datum.mit.mitTime);
             let aveTime = getaveTime(datum.mit.aveMit); //计算成功率
@@ -237,11 +267,10 @@ $(function () {
             myChartb.setOption(optionb);
 
             $("#rate8").text(rateTime);
-            datum.mit.mitTime.length = 0;
-            datum.mit.aveMit.length = 0;
+            datum.mit.mitTime.shift();
+            datum.mit.aveMit.shift();
         }
-        datum.mit.mitTime.push(data);
-        datum.mit.aveMit.push(driftTime);
+
 
         if (option.series[6].data.length < 50) {
             option.series[6].data.push(driftTime);
@@ -250,12 +279,16 @@ $(function () {
             option.series[6].data.push(driftTime);
         }
         myChart.setOption(option);
-        $("#txt8").text(baseTime);
-        $("#dft8").text(driftTime);
+
     });
     socket.on('nist', function (data) {
-        let baseTime = getLocalTime(data);
-        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1]);
+        let baseTime = getLocalTime(data.time);
+        let driftTime = data.dif; //计算与标准时间的差值
+        $("#txt9").text(baseTime);
+        $("#dft9").text(driftTime);
+        datum.nist.niTime.push(data.time);
+        datum.nist.aveNist.push(driftTime);
+
         if (datum.nist.niTime.length == 100) {
             let rateTime = getRateTime(datum.nist.niTime);
             let aveTime = getaveTime(datum.nist.aveNist); //计算成功率
@@ -265,11 +298,10 @@ $(function () {
             myChartb.setOption(optionb);
 
             $("#rate9").text(rateTime);
-            datum.nist.niTime.length = 0;
-            datum.nist.aveNist.length = 0;
+            datum.nist.niTime.shift();
+            datum.nist.aveNist.shift();
         }
-        datum.nist.niTime.push(data);
-        datum.nist.aveNist.push(driftTime);
+
 
         if (option.series[7].data.length < 50) {
             option.series[7].data.push(driftTime);
@@ -278,12 +310,15 @@ $(function () {
             option.series[7].data.push(driftTime);
         }
         myChart.setOption(option);
-        $("#txt9").text(baseTime);
-        $("#dft9").text(driftTime);
+
     });
     socket.on('pool', function (data) {
-        let baseTime = getLocalTime(data);
-        let driftTime = getDriftTime(data, datum.bupt.bTime[datum.bupt.bTime.length - 1]);
+        let baseTime = getLocalTime(data.time);
+        let driftTime = data.dif; //计算与标准时间的差值
+        $("#txt10").text(baseTime);
+        $("#dft10").text(driftTime);
+        datum.pool.pTime.push(data.time);
+        datum.pool.avePool.push(driftTime);
         if (datum.pool.pTime.length == 100) {
             let rateTime = getRateTime(datum.pool.pTime);
             let aveTime = getaveTime(datum.pool.avePool); //计算成功率
@@ -293,11 +328,10 @@ $(function () {
             myChartb.setOption(optionb);
 
             $("#rate10").text(rateTime);
-            datum.pool.pTime.length = 0;
-            datum.pool.avePool.length = 0;
+            datum.pool.pTime.shift();
+            datum.pool.avePool.shift();
         }
-        datum.pool.pTime.push(data);
-        datum.pool.avePool.push(driftTime);
+
 
         if (option.series[8].data.length < 50) {
             option.series[8].data.push(driftTime);
@@ -306,8 +340,7 @@ $(function () {
             option.series[8].data.push(driftTime);
         }
         myChart.setOption(option);
-        $("#txt10").text(baseTime);
-        $("#dft10").text(driftTime);
+
     });
     $("#btn").on('click', function () {
         console.log(datum);
@@ -318,7 +351,7 @@ $(function () {
 
     // 指定图表的配置项和数据
     option = {
-        color: ['#759aa0', '#e69d87', '#ea7e53', '#eedd78', '#73a373','#7289ab','#91ca8c','#f49f42','#dd6b66','#759aa0' ],
+        color: ['#759aa0', '#e69d87', '#ea7e53', '#eedd78', '#73a373', '#7289ab', '#91ca8c', '#f49f42', '#dd6b66', '#759aa0'],
         legend: {
             data: [{
                 name: '中国国家授时中心',
@@ -383,11 +416,11 @@ $(function () {
             name: 'Time Interval(ms)',
             nameLocation: 'middle',
             nameGap: 20,
-            nameTextStyle:{
-                color:'#fff'
+            nameTextStyle: {
+                color: '#fff'
             },
             boundaryGap: false,
-            data: [0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 6290, 12, 13, 14, 15, 16, 17, 18, 19, 20, 12580, 22, 23, 24, 25, 26, 27, 28, 29, 30, 18870, 32, 33, 34, 35, 36, 37, 38, 39, 40, 25160, 42, 43, 44, 45, 46, 47, 48, 49, 50],
+            data: [0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10000, 12, 13, 14, 15, 16, 17, 18, 19, 20, 20000, 22, 23, 24, 25, 26, 27, 28, 29, 30, 30000, 32, 33, 34, 35, 36, 37, 38, 39, 40, 40000, 42, 43, 44, 45, 46, 47, 48, 49, 50],
             axisLine: {
                 show: true,
                 lineStyle: {
@@ -432,50 +465,50 @@ $(function () {
             formatter: '{a0}: {c0}ms<br />{a1}: {c1}ms<br />{a2}: {c2}ms<br />{a3}: {c3}ms<br />{a4}: {c4}ms<br />{a5}: {c5}ms<br />{a6}: {c6}ms'
         },
         series: [{
-                name: '中国国家授时中心',
-                type: 'line',
-                data: []
-            },
-            {
-                name: '阿里巴巴',
-                type: 'line',
-                data: []
-            },
-            {
-                name: '清华大学',
-                type: 'line',
-                data: []
-            },
-            {
-                name: 'Apple',
-                type: 'line',
-                data: []
-            },
-            {
-                name: '微软',
-                type: 'line',
-                data: []
-            },
-            {
-                name: '计量院',
-                type: 'line',
-                data: []
-            },
-            {
-                name: 'MIT',
-                type: 'line',
-                data: []
-            },
-            {
-                name: 'NIST',
-                type: 'line',
-                data: []
-            },
-            {
-                name: 'POOL',
-                type: 'line',
-                data: []
-            }
+            name: '中国国家授时中心',
+            type: 'line',
+            data: []
+        },
+        {
+            name: '阿里巴巴',
+            type: 'line',
+            data: []
+        },
+        {
+            name: '清华大学',
+            type: 'line',
+            data: []
+        },
+        {
+            name: 'Apple',
+            type: 'line',
+            data: []
+        },
+        {
+            name: '微软',
+            type: 'line',
+            data: []
+        },
+        {
+            name: '计量院',
+            type: 'line',
+            data: []
+        },
+        {
+            name: 'MIT',
+            type: 'line',
+            data: []
+        },
+        {
+            name: 'NIST',
+            type: 'line',
+            data: []
+        },
+        {
+            name: 'POOL',
+            type: 'line',
+            data: []
+        }
         ]
     };
     // 使用刚指定的配置项和数据显示图表。
@@ -503,7 +536,7 @@ $(function () {
         },
         xAxis: {
             type: 'category',
-            data: ['中国国家授时中心', '阿里巴巴', '清华大学', 'Apple', '微软', '计量院','MIT','NIST','NTP.POOL'],
+            data: ['中国国家授时中心', '阿里巴巴', '清华大学', 'Apple', '微软', '计量院', 'MIT', 'NIST', 'NTP.POOL'],
             axisLine: {
                 show: true,
                 lineStyle: {
@@ -522,7 +555,7 @@ $(function () {
             name: 'ms',
             nameTextStyle: {
                 color: '#fff',
-                fontSize:15,
+                fontSize: 15,
             },
             nameGap: 40,
             nameLocation: 'middle',
@@ -581,7 +614,7 @@ $(function () {
             }, {
                 name: '计量院',
                 value: 24.43,
-            },{
+            }, {
                 name: 'MIT',
                 value: 13.43,
             }, {
