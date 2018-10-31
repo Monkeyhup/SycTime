@@ -52,7 +52,9 @@ function getTableData(offset) {
 //获取当地时间
 function getLocalTime(msTime) {
     if (msTime == 'timeout') {
-        return 'NaN';
+        return 'timeout';
+    }else if(msTime=='zero'){
+        return 'zero';
     } else {
         let date = new Date("Jan 01 1900 GMT");
         date.setUTCMilliseconds(msTime);

@@ -3,7 +3,7 @@ const Koa = require('koa2');
 const fs = require('fs');
 const static = require('koa-static');
 const path = require('path');
-
+const wait = require('wait-for-stuff');
 const app = new Koa();
 const ntpClient = require('ntp-client');
 
@@ -93,26 +93,22 @@ io.on('connection', function (socket) {
     // }, 629);
     //清华大学
     let tw6 = setInterval(function () {
-        ntpClient.getNetworkTime("192.168.21.100", 123, 500, function (err, date) {
+        ntpClient.getNetworkTime("18.26.4.105", 123, 800, function (err, date) {
+            console.log(date)
             if (err) {
-                console.error(err);
-                socket.emit('ts', 0);
+                console.log(err);
+                socket.emit('ts', 'timeout');
                 return;
             }
-            // val = date - short;
-            // short = date;
-            // let w_data = val + '\r\n';
-            // let b_data = new Buffer(w_data);
-            // fs.writeFile(__dirname + '/data/base.txt', b_data, { flag: 'a' }, function (err) {
-            //     if (err) {
-            //         console.error(err);
-            //     } else {
-            //         console.log('写入成功');
-            //     }
-            // });
+            if(date==0){
+                console.log('发送的是0');
+                socket.emit('ts', 'timeout');
+                wait.for.time(10);
+                return;
+            }
             socket.emit('ts', date);
         });
-    }, 1);
+    }, 1000);
     let short1 = 0,
     val1 = 0;
     //东北大学
@@ -144,8 +140,8 @@ io.on('connection', function (socket) {
         // clearInterval(tw3);
         // clearInterval(tw4);
         // clearInterval(tw5);
-        // clearInterval(tw6);
-        clearInterval(tw7);
+        clearInterval(tw6);
+        // clearInterval(tw7);
     });
 });
 

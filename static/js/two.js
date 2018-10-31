@@ -73,23 +73,6 @@ $(function () {
             datum.ntsc.aveNtsc.shift(); //重新开始数组并计算平均成功率
         }
 
-        // aaaaaaaaaaaaaaaaaaaaaaaaa
-        // if (datum.ntsc.nTime.length == 100) { //判断数组的长度
-        //     let rateTime = getRateTime(datum.ntsc.nTime); //计算成功率
-        //     let aveTime = getaveTime(datum.ntsc.aveNtsc); //计算成功率
-
-        //     //更新图表二的数据值
-        //     optionb.series[0].data[0].value = aveTime;
-
-        //     myChartb.setOption(optionb);
-
-        //     $("#rate2").text(rateTime); //未成功率赋值
-        //     datum.ntsc.nTime.length = 0; //重新开始数组并计算成功率
-        //     datum.ntsc.aveNtsc.length = 0; //重新开始数组并计算平均成功率
-        // }
-        // datum.ntsc.nTime.push(data.time); // 为数组添加时间值
-        // datum.ntsc.aveNtsc.push(driftTime); // 为数组添加时间值
-
         //更新图表一的数据值
         if (option.series[0].data.length < 50) {
             option.series[0].data.push(driftTime);
@@ -100,6 +83,11 @@ $(function () {
         myChart.setOption(option);
 
     });
+    socket.on('ntscInfo', function (data) {
+        $("#ip2").text(data.ip);
+        $("#site2").text(data.region);
+    });
+    //阿里
     socket.on('ali', function (data) {
         let baseTime = getLocalTime(data.time);
         let driftTime = data.dif; //计算与标准时间的差值
@@ -119,8 +107,6 @@ $(function () {
             datum.ali.aTime.shift();
             datum.ali.aveAli.shift();
         }
-
-
         if (option.series[1].data.length < 50) {
             option.series[1].data.push(driftTime);
         } else {
@@ -130,6 +116,11 @@ $(function () {
         myChart.setOption(option);
 
     });
+    socket.on('aliInfo', function (data) {
+        $("#ip3").text(data.ip);
+        $("#site3").text(data.region);
+    });
+    //清华
     socket.on('ts', function (data) {
         let baseTime = getLocalTime(data.time);
         let driftTime = data.dif; //计算与标准时间的差值
@@ -149,9 +140,6 @@ $(function () {
             datum.ts.tTime.shift();
             datum.ts.aveTs.shift();
         }
-
-
-
         if (option.series[2].data.length < 50) {
             option.series[2].data.push(driftTime);
         } else {
@@ -161,6 +149,11 @@ $(function () {
         myChart.setOption(option);
 
     });
+    socket.on('tsInfo', function (data) {
+        $("#ip4").text(data.ip);
+        $("#site4").text(data.region);
+    });
+    //Apple
     socket.on('Apple', function (data) {
         let baseTime = getLocalTime(data.time);
         let driftTime = data.dif; //计算与标准时间的差值
@@ -180,8 +173,6 @@ $(function () {
             datum.Apple.apTime.shift();
             datum.Apple.aveApple.shift();
         }
-
-
         if (option.series[3].data.length < 50) {
             option.series[3].data.push(driftTime);
         } else {
@@ -191,6 +182,11 @@ $(function () {
         myChart.setOption(option);
 
     });
+    socket.on('appleInfo', function (data) {
+        $("#ip5").text(data.ip);
+        $("#site5").text(data.region);
+    });
+    //微软
     socket.on('mic', function (data) {
         let baseTime = getLocalTime(data.time);
         let driftTime = data.dif; //计算与标准时间的差值
@@ -210,8 +206,6 @@ $(function () {
             datum.mic.mTime.shift();
             datum.mic.aveMic.shift();
         }
-
-
         if (option.series[4].data.length < 50) {
             option.series[4].data.push(driftTime);
         } else {
@@ -221,6 +215,11 @@ $(function () {
         myChart.setOption(option);
 
     });
+    socket.on('micInfo', function (data) {
+        $("#ip6").text(data.ip);
+        $("#site6").text(data.region);
+    });
+    //计量院
     socket.on('jly', function (data) {
         let baseTime = getLocalTime(data.time);
         let driftTime = data.dif; //计算与标准时间的差值
@@ -240,8 +239,6 @@ $(function () {
             datum.jly.jTime.shift();
             datum.jly.aveJly.shift();
         }
-
-
         if (option.series[5].data.length < 50) {
             option.series[5].data.push(driftTime);
         } else {
@@ -251,7 +248,13 @@ $(function () {
         myChart.setOption(option);
 
     });
+    socket.on('jlyInfo', function (data) {
+        $("#ip7").text(data.ip);
+        $("#site7").text(data.region);
+    });
+    //mit
     socket.on('mit', function (data) {
+        console.log(data);
         let baseTime = getLocalTime(data.time);
         let driftTime = data.dif; //计算与标准时间的差值
         $("#txt8").text(baseTime);
@@ -270,8 +273,6 @@ $(function () {
             datum.mit.mitTime.shift();
             datum.mit.aveMit.shift();
         }
-
-
         if (option.series[6].data.length < 50) {
             option.series[6].data.push(driftTime);
         } else {
@@ -281,6 +282,11 @@ $(function () {
         myChart.setOption(option);
 
     });
+    socket.on('mitInfo', function (data) {
+        $("#ip8").text(data.ip);
+        $("#site8").text(data.region);
+    });
+    //nist
     socket.on('nist', function (data) {
         let baseTime = getLocalTime(data.time);
         let driftTime = data.dif; //计算与标准时间的差值
@@ -301,8 +307,6 @@ $(function () {
             datum.nist.niTime.shift();
             datum.nist.aveNist.shift();
         }
-
-
         if (option.series[7].data.length < 50) {
             option.series[7].data.push(driftTime);
         } else {
@@ -312,6 +316,11 @@ $(function () {
         myChart.setOption(option);
 
     });
+    socket.on('nistInfo', function (data) {
+        $("#ip9").text(data.ip);
+        $("#site9").text(data.region);
+    });
+    //pool
     socket.on('pool', function (data) {
         let baseTime = getLocalTime(data.time);
         let driftTime = data.dif; //计算与标准时间的差值
@@ -331,8 +340,6 @@ $(function () {
             datum.pool.pTime.shift();
             datum.pool.avePool.shift();
         }
-
-
         if (option.series[8].data.length < 50) {
             option.series[8].data.push(driftTime);
         } else {
@@ -342,9 +349,11 @@ $(function () {
         myChart.setOption(option);
 
     });
-    $("#btn").on('click', function () {
-        console.log(datum);
+    socket.on('poolInfo', function (data) {
+        $("#ip10").text(data.ip);
+        $("#site10").text(data.region);
     });
+    
 
     //以下是图表一，即与标准时间的差值
     let myChart = echarts.init(document.getElementById('dif_table'));

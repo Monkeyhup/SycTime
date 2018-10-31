@@ -18,7 +18,7 @@
      * Amount of acceptable time to await for a response from the remote server.
      * Configured default to 10 seconds.
      */
-    exports.ntpReplyTimeout = 10000;
+    exports.ntpReplyTimeout = 1000;
 
     /**
      * Fetches the current NTP Time from the given server and port.
@@ -27,34 +27,40 @@
      * @param {function(Object, Date)} callback(err, date) Async callback for
      * the result date or eventually error.
      */
-    exports.getNetworkTime = function (server, port, callback) {
+    exports.getNetworkTime = function (server, port, reply, callback) {
         if (callback === null || typeof callback !== "function") {
             return;
         }
 
         server = server || exports.defaultNtpServer;
         port = port || exports.defaultNtpPort;
-        if(server.indexOf("edu")>-1){
-            var client = dgram.createSocket("udp6"),
-        }else{
-            var client = dgram.createSocket("udp4"),
-        }
+        reply = reply || exports.ntpReplyTimeout;
 
-        var ntpData = new Buffer(48);
+        if (server.indexOf("edu") > -1) {
+            var client = dgram.createSocket("udp6"),
+                ntpData = Buffer.alloc(48);
+        } else {
+            var client = dgram.createSocket("udp4"),
+                ntpData = Buffer.alloc(48);
+        }
+        // var client = dgram.createSocket("udp4"),
+        //         ntpData = Buffer.alloc(48);
+
+
 
         // RFC 2030 -> LI = 0 (no warning, 2 bits), VN = 3 (IPv4 only, 3 bits), Mode = 3 (Client Mode, 3 bits) -> 1 byte
         // -> rtol(LI, 6) ^ rotl(VN, 3) ^ rotl(Mode, 0)
         // -> = 0x00 ^ 0x18 ^ 0x03
         ntpData[0] = 0x1B;
 
-        for (var i = 1; i < 48; i++) {
-            ntpData[i] = 0;
-        }
+        // for (var i = 1; i < 48; i++) {
+        //     ntpData[i] = 0;
+        // }
 
         var timeout = setTimeout(function () {
             client.close();
             callback("Timeout waiting for NTP response.", null);
-        }, exports.ntpReplyTimeout);
+        }, reply);
 
         // Some errors can happen before/after send() or cause send() to was impossible.
         // Some errors will also be given to the send() callback.
@@ -63,6 +69,7 @@
         var errorFired = false;
 
         client.on('error', function (err) {
+            // console.log("执行error中的err: " + err);
             if (errorFired) {
                 return;
             }
@@ -74,7 +81,9 @@
         });
 
         client.send(ntpData, 0, ntpData.length, port, server, function (err) {
+            // console.log('执行send');
             if (err) {
+                // console.log("执行send中的err: " + err);
                 if (errorFired) {
                     return;
                 }
@@ -86,6 +95,7 @@
             }
 
             client.once('message', function (msg) {
+                // console.log('执行message');
                 clearTimeout(timeout);
                 client.close();
 
@@ -111,7 +121,11 @@
                 var date = new Date("Jan 01 1900 GMT");
                 date.setUTCMilliseconds(date.getUTCMilliseconds() + milliseconds);
 
-                callback(null, date);
+                //NTP毫秒数
+                var ntpMs = date.getUTCMilliseconds() + milliseconds;
+                //NTP毫秒数变为整数形式
+                // ntpMs=parseInt(ntpMs);
+                callback(null, ntpMs);
             });
         });
     };
